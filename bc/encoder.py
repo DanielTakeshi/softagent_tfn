@@ -21,21 +21,16 @@ OUT_DIM_64 = {2: 29, 4: 25, 6: 21}
 
 
 class PixelEncoder(nn.Module):
-    """Convolutional encoder of pixels observations.
-
-    Update 08/24/2022: support depth_segm as observation type.
-    """
+    """Convolutional encoder of pixels observations."""
 
     def __init__(self, obs_shape, feature_dim, num_layers=2, num_filters=32,
-            output_logits=False, depth_segm=False):
+            output_logits=False):
         super().__init__()
 
         assert len(obs_shape) == 3
         self.obs_shape = obs_shape
         self.feature_dim = feature_dim
         self.num_layers = num_layers
-        self.depth_segm = depth_segm
-        print(f'Making Image CNN. Using a segm? {self.depth_segm}, obs: {self.obs_shape}')
 
         self.convs = nn.ModuleList(
             [nn.Conv2d(obs_shape[0], num_filters, 3, stride=2)]
@@ -66,20 +61,7 @@ class PixelEncoder(nn.Module):
         return mu + eps * std
 
     def forward_conv(self, obs):
-        """Forward pass through CNN.
-
-        NOTE(daniel): since we support RGBD input now, only divide by 255 for the
-        image based components. With just RGBD we can do: obs = obs / 255.
-        """
-        if self.depth_segm:
-            # Special case, we actually don't do anything as the image should already
-            # be binary 0-1 for the masks, and between [0,x] for depth, where x ~ 1.
-            # E.g., for MMOneSphere, image channels are: depth, tool mask, item mask.
-            # Update: also doing this for rgb_segm_masks, rgbd_segm_masks, as we assume
-            # the input will be in the correct range.
-            pass
-        else:
-            obs[:,:3,:,:] /= 255.  # (batch, channels, H, W)
+        obs = obs / 255.
         self.outputs['obs'] = obs
 
         conv = torch.relu(self.convs[0](obs))
@@ -133,8 +115,7 @@ class PixelEncoder(nn.Module):
 
 
 class IdentityEncoder(nn.Module):
-    def __init__(self, obs_shape, feature_dim, num_layers, num_filters, output_logits,
-            depth_segm=False):
+    def __init__(self, obs_shape, feature_dim, num_layers, num_filters, *args):
         super().__init__()
         assert len(obs_shape) == 1
         self.feature_dim = obs_shape[0]
@@ -153,8 +134,7 @@ class IdentityPNEncoder(nn.Module):
     """NOTE(daniel) for PointNet++, to allow for len(obs_shape) = 2.
     But this will still be an identity function. Just to make code consistent.
     """
-    def __init__(self, obs_shape, feature_dim, num_layers, num_filters, output_logits,
-            depth_segm=False):
+    def __init__(self, obs_shape, feature_dim, num_layers, num_filters, *args):
         super().__init__()
         assert len(obs_shape) == 2
         self.feature_dim = obs_shape
@@ -169,35 +149,23 @@ class IdentityPNEncoder(nn.Module):
         pass
 
 
-# NOTE(daniel): this shoudl be fixed at some point, after deadline. :)
+# NOTE(daniel): if segmenting, use the same PixelEncoder for now.
 _AVAILABLE_ENCODERS = {'pixel': PixelEncoder,
                        'segm': PixelEncoder,
-                       'mlp': IdentityEncoder,
-                       'state_predictor_then_mlp': IdentityEncoder,
                        'identity': IdentityEncoder,
                        'pointnet': IdentityPNEncoder,
-                       'pointnet_rpmg': IdentityPNEncoder,
                        'pointnet_avg': IdentityPNEncoder,
                        'pointnet_svd': IdentityPNEncoder,
                        'pointnet_svd_centered': IdentityPNEncoder,
                        'pointnet_svd_pointwise': IdentityPNEncoder,
                        'pointnet_svd_pointwise_6d_flow': IdentityPNEncoder,
-                       'pointnet_dense_tf_3D_MSE': IdentityPNEncoder,
-                       'pointnet_dense_tf_6D_MSE': IdentityPNEncoder,
-                       'pointnet_dense_tf_6D_pointwise': IdentityPNEncoder,
-                       'pointnet_classif_6D_pointwise': IdentityPNEncoder,
-                       'pointnet_rpmg_pointwise': IdentityPNEncoder,
-                       'pointnet_rpmg_taugt': IdentityPNEncoder,
-                       'pointnet_svd_6d_flow_mse_loss': IdentityPNEncoder,
-                       'pointnet_svd_pointwise_PW_bef_SVD': IdentityPNEncoder,
 }
 
 
 def make_encoder(
-    encoder_type, obs_shape, feature_dim, num_layers, num_filters, output_logits=False,
-    depth_segm=False
+    encoder_type, obs_shape, feature_dim, num_layers, num_filters, output_logits=False
 ):
     assert encoder_type in _AVAILABLE_ENCODERS
     return _AVAILABLE_ENCODERS[encoder_type](
-        obs_shape, feature_dim, num_layers, num_filters, output_logits, depth_segm=depth_segm
+        obs_shape, feature_dim, num_layers, num_filters, output_logits
     )

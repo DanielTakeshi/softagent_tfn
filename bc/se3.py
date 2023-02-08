@@ -1,3 +1,8 @@
+"""From Brian Okorn and Chuer Pan.
+https://github.com/r-pad/equivariant_pose_graph/tree/main/python/equivariant_pose_graph/utils
+
+We're probably inerested in `flow2pose()`.
+"""
 import os
 import sys
 import pickle
@@ -7,8 +12,6 @@ from pytorch3d.transforms import (
 )
 import torch
 import numpy as np
-DEG_TO_RAD = np.pi / 180.
-RAD_TO_DEG = 180 / np.pi
 
 
 def to_transform3d(x, rot_function = rotation_6d_to_matrix):
@@ -31,6 +34,15 @@ def transform3d_to(T, device):
         t.to(device) for t in T._transforms
     ]
     return T
+
+
+# def random_se3(N, rot_var = np.pi/180 * 5, trans_var = 0.1, device = None):
+#     T =  se3_exp_map(torch.cat(
+#         [
+#             torch.randn(N,3, device=device)*trans_var,
+#             torch.randn(N,3, device=device)*rot_var,
+#         ], dim=-1))
+#     return Transform3d(matrix=T, device=device)
 
 
 def random_se3(N, rot_var = np.pi/180 * 5, trans_var = 0.1, device = None):
@@ -62,9 +74,6 @@ def flow2pose(xyz, flow, weights=None, return_transform3d=False,
     all point clouds have `N` points, but in practice we only call this with
     minibatch size 1 and we get rid of non-tool points before calling this.
 
-    Outputs a rotation with the origin at the tool centroid. This is not the
-    origin of the frame where actions are expressed, which is at the tool tip.
-
     Parameters
     ----------
     xyz: point clouds of shape (B,N,3). This gets zero-centered so it's OK if it
@@ -78,8 +87,6 @@ def flow2pose(xyz, flow, weights=None, return_transform3d=False,
         by applying this on original points and comparing point-wise MSEs.
     return_quaternions: Use if we want to convert rotation matrices to quaternions.
         Uses format of (wxyz) format, so the identity quanternion is (1,0,0,0).
-    world_frameify: Use if we want to correct the translation vector so that the
-        transformation is expressed w.r.t. the world frame.
     """
     if weights is None:
         weights = torch.ones(xyz.shape[:-1], device=xyz.device)
@@ -278,8 +285,8 @@ if __name__ == "__main__":
 
     # Minibatch of B point clouds, 10 points in it, with 3D position or flow.
     B = 4
-    xyz = torch.rand(B,10000,3)
-    flow = torch.rand(B,10000,3) * 0.01
+    xyz = torch.rand(B,100,3)
+    flow = torch.rand(B,100,3)
     ret_trans = False
     ret_quat = False
     world_frameify = True
@@ -330,10 +337,8 @@ if __name__ == "__main__":
         print(R[b])
         quat_b = matrix_to_quaternion(R[b])
         aang_b = quaternion_to_axis_angle(quat_b)
-        magn_rad = torch.norm(aang_b)
-        magn_deg = magn_rad * RAD_TO_DEG
         print(f'quaternion: {quat_b}')
-        print(f'axis-angle: {aang_b}, magnitude: {magn_rad:0.3f} rad, {magn_deg:0.3f} deg')
+        print(f'axis-angle: {aang_b} with magnitude: {torch.norm(aang_b):0.4f}')
         print(f'translation: {t[b]}')
         if not ret_quat:
             print(f'To confirm rotation matrix (also check it is on cuda):')
