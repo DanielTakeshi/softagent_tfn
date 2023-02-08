@@ -23,12 +23,9 @@ from bc import exp_configs
 
 # For BC data directory. This may be machine-dependent.
 #* Pointers to where the data tarballs are stored. First one for the cluster and the second for marvin/takeshi
-DATA_HEAD0 = '/data/dseita/softgym_mm/data_demo'  # cluster/seuss
-DATA_HEAD1 = '/data/sarthak'
-
-# Saved models, for rolling out policies later.
-LOAD_HEAD = '/data/seita/softagent_mm'
-
+# ----------------------------- ADJUST -------------------------------- #
+DATA_HEAD = '/data/sarthak/softagent_tfn_physical/data_demo/'
+# --------------------------------------------------------------------- #
 
 def get_dataset_info(suffix, mode, num_samples):
     """Given a dataset, return dict with relevant info.
@@ -40,10 +37,7 @@ def get_dataset_info(suffix, mode, num_samples):
     """
     info = {}
 
-    if mode == 'seuss':
-        info['bc_data_dir'] = join(DATA_HEAD0, suffix)
-    else:
-        info['bc_data_dir'] = join(DATA_HEAD1, suffix)
+    info['bc_data_dir'] = join(DATA_HEAD, suffix)
     info['suffix'] = suffix
 
     # Assume not translation by default unless specified otherwise.
@@ -227,8 +221,12 @@ def main(mode, debug, dry, num_samples):
     # ------------------------------------------------------------------------- #
     # Decision 1: pick the correct datasets.
     # ------------------------------------------------------------------------- #
+
+
+    # ----------------------------- ADJUST -------------------------------- #
     suffix = 'v07_rotation_translation_variably_composed'
     data_info = get_dataset_info(suffix, mode, num_samples)
+    # --------------------------------------------------------------------- #
 
     # ------------------------------------------------------------------------- #
     # Decision 2: pick the method, normally it should be one of:

@@ -131,80 +131,18 @@ desired.
 example, setting this:
 
 ```
-DATA_HEAD = '/home/seita/softgym_tfn/data_demo/'
+DATA_HEAD = '/data/sarthak/softagent_tfn_physical/data_demo/'
 ```
 
 near the top of `launch_exp.py` means that, for a run with PourWater (3D), I
 should expect to see the demonstrations located at:
 
 ```
-/home/seita/softgym_tfn/data_demo/PourWater_v01_BClone_filtered_wDepth_pw_algo_v02_nVars_1500_obs_combo_act_translation_axis_angle_withWaterFrac
+/data/sarthak/softagent_tfn_physical/data_demo/v07_rotation_translation_variably_composed
 ```
-
-**Second**: select the task you want, either `PourWater` (the 3DOF action space
-version) or `PourWater6D` (with 6DOF actions). This means selecting *one* of the
-following:
-
-```
-env, env_version, alg_policy = 'PourWater', 'v01', 'pw_algo_v02'
-env, env_version, alg_policy = 'PourWater6D', 'v01', 'pw_algo_v02'
-```
-
-Be sure to comment out whatever option you are not using.
-
-**Third**: pick the method. For example, select ToolFlowNet with:
-
-```
-this_cfg = exp_configs.SVD_POINTWISE_EE2FLOW
-```
-
-or the PCL Direct Vector MSE baseline with:
-
-```
-this_cfg = exp_configs.DIRECT_VECTOR_INTRINSIC_AXIS_ANGLE
-```
-
-There are many experiment options. See the comments and `bc/exp_configs.py` for
-more details.
-
-Finally, double check all the settings in the variant generator (`vg`). For the
-paper we typically ran by setting:
-
-```
-vg.add('seed', [100,101,102,103,104])
-```
-
-as the only variant, in the sense that this is the only `vg` option with more
-than one list item. This means (as stated in our paper) we ran 5 random seeds
-for each experiment setting.
 
 Once you are confident the settings are correct, run the script! (Did you
 remember to set up `wandb`?)
-
-
-## Inspect Results
-
-For accumulating and computing results for the CoRL 2022 paper, we used one of
-the following four commands:
-
-```
-python results_table.py
-python results_table.py --show_avg_epoch
-python results_table.py --show_raw_perf
-python results_table.py --show_raw_perf --show_avg_epoch
-```
-
-These four commands, respectively, produce a table of statistics which correspond to results in
-**Table 1**, **Table S5**, **Table S6**, and **Table S7**  in the paper.
-Some relevant keys in the code are:
-
-- `FLOW3D_SVD_PW_CONSIST_0_1` corresponds to ToolFlowNet with `lambda` (consistency weight) value of 0.1.
-- `PCL_DIRECT_VECTOR_MSE_INTRIN_AXANG` corresponds to "PCL Direct Vector MSE."
-- `PCL_DENSE_TRANSF_MSE_INTRIN_AXANG` corresponds to "PCL Dense Transformation MSE."
-
-Successfully running this command requires having all relevant experiment
-results. We provide this script to explain how we produced the results.
-
 
 ## Citation
 
@@ -219,5 +157,5 @@ If you find this repository useful, please cite our paper:
 }
 ```
 
-[1]:https://github.com/DanielTakeshi/softgym_tfn
+[1]:https://github.com/SarthakJShetty/tfn_robot_code
 [2]:https://docs.wandb.ai/
