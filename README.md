@@ -17,11 +17,13 @@
 
 <hr>
 
+:warning: **This is the branch for training ToolFlowNet on the real world robot data** :warning:
+
 This has the **ToolFlowNet** code for
 <a href="https://arxiv.org/abs/2211.09006"><b>our CoRL 2022 paper</b></a>.
 See <a href="https://github.com/DanielTakeshi/softgym_tfn">our other repository</a>
 for the SoftGym environment code. Note that you should install that code *first*,
-and then this ToolFlowNet code *second*.
+and then this ToolFlowNet code *second*. Furthermore, this branch specifically is for training and evaluating ToolFlowNet on the real world data.
 
 The code in this repository has a bunch of SoftGym-specific components. We are
 working on a separate, simplified version of ToolFlowNet which is more agnostic
@@ -34,12 +36,9 @@ Contents:
 - [Installation](#installation)
 - [How to Use](#how-to-use)
 - [CoRL 2022 Experiments](#corl-2022-experiments)
-- [Inspect Results](#inspect-results)
 - [Citation](#citation)
 
 <hr>
-
-:warning: **This is the branch for training ToolFlowNet on the real world demonstrator data** :warning:
 
 Running the instructions in this branch assumes that you have correctly installed [`softgym_tfn`](https://github.com/DanielTakeshi/softgym_tfn) and `softagent_tfn`[https://github.com/DanielTakeshi/softagent_tfn/].
 
@@ -73,32 +72,13 @@ The main way that we launch experiments is with:
 python launch_exp.py
 ```
 
-or
-
-```
-python launch_exp.py --debug
-```
-
-The first case will run multiple combinations of variants in parallel. Thus, be
-careful about launching a lot of variants, since the combination can overwhelm
-one machine. Adding the `--debug` flag means the code runs just one of the
-variants. *We recommend using `--debug` to start*.  In addition,  when running
-multiple variants, we recommend only adjusting the random seed. We can do this
-by (for example) setting `vg.add('seed', [100,101])` and making all other
-`vg.add(...)` calls use just one-length lists. This will run 2 runs in parallel,
-each with the same settings, except with different random seeds. For the paper,
-we launched these scripts while using 5 random seeds with
-`vg.add('seed', [100,101,102,103,104])`.
+Running this command will launch the training loop. Make sure you check the 
 
 See `launch_exp.py` for details on what to modify. The three main areas to
 adjust for the purpose of learning from demonstrations are:
 
 - Adjusting the behavioral cloning data directory.
-- Selecting the environment to use, `PourWater` or `PourWater6D`. In this code,
-  `PourWater` refers to the task version with 3DOF actions.
-- Selecting the method to use by setting `this_cfg` appropriately. See the code
-  comments and `bc/exp_configs.py` for more about what the different
-  configurations mean.
+- Make sure that the right method has been selected in the `launch_exp.py` file. 
 
 You can find these areas by searching in `launch_exp.py` for this pattern:
 
@@ -127,8 +107,7 @@ you leave these blank, the script might not run successfully.
 
 Before this, make sure you have downloaded demonstration data [following our
 other repository's instructions][1]. This includes both the cache and the
-demonstrations themselves. While the default instructions put the data in
-`~/softgym_tfn/data_demo`, you may put the data in a different location if
+demonstrations themselves. You may put the data in a different location if
 desired.
 
 **First**: with the demonstration data, adjust the `DATA_HEAD` variable. For
@@ -138,8 +117,7 @@ example, setting this:
 DATA_HEAD = '/data/sarthak/softagent_tfn_physical/data_demo/'
 ```
 
-near the top of `launch_exp.py` means that, for a run with PourWater (3D), I
-should expect to see the demonstrations located at:
+near the top of `launch_exp.py` means that, I should expect to see the demonstrations located at:
 
 ```
 /data/sarthak/softagent_tfn_physical/data_demo/v07_rotation_translation_variably_composed
@@ -161,5 +139,5 @@ If you find this repository useful, please cite our paper:
 }
 ```
 
-[1]:https://github.com/SarthakJShetty/tfn_robot_code
+[1]:https://github.com/SarthakJShetty/tfn-robot
 [2]:https://docs.wandb.ai/
