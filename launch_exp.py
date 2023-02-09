@@ -272,6 +272,9 @@ def main(mode, debug, dry, num_samples):
             scale_targets=scale_targets,
     )
 
+
+    # ----------------------------- ADJUST -------------------------------- #
+
     vg = VariantGenerator()
     vg.add('wandb_project', ['']) # Fill this in!
     vg.add('wandb_entity', ['']) # Fill this in!
