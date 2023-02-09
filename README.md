@@ -27,6 +27,8 @@ The code in this repository has a bunch of SoftGym-specific components. We are
 working on a separate, simplified version of ToolFlowNet which is more agnostic
 to the choice of environment or task.
 
+**Note:** This branch contains instructions to run the ToolFlowNet simulation code. For the physical experiments code, we maintain a seperate [**`physical`**](https://github.com/DanielTakeshi/softagent_tfn/tree/physical) branch and a seperate repository [**`tfn-robot`**](https://github.com/SarthakJShetty/tfn-robot) for the real-world data collection and robot control code.
+
 <hr>
 
 Contents:
