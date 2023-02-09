@@ -23,11 +23,15 @@ This has the **ToolFlowNet** code for
 <a href="https://arxiv.org/abs/2211.09006"><b>our CoRL 2022 paper</b></a>.
 See <a href="https://github.com/DanielTakeshi/softgym_tfn">our other repository</a>
 for the SoftGym environment code. Note that you should install that code *first*,
-and then this ToolFlowNet code *second*. Furthermore, this branch specifically is for training and evaluating ToolFlowNet on the real world data.
+and then this ToolFlowNet code *second*. **Furthermore, this branch specifically is for training and evaluating ToolFlowNet on the real world data.**
 
 The code in this repository has a bunch of SoftGym-specific components. We are
 working on a separate, simplified version of ToolFlowNet which is more agnostic
 to the choice of environment or task.
+
+### **Note**:
+
+Before using this repository to train ToolFlowNet on the real-world data, **make sure you follow the steps in the [`tfn-robot`](https://github.com/SarthakJShetty/tfn-robot) to collect, process and asnalyze the real world data**. The [`tfn-robot`](https://github.com/SarthakJShetty/tfn-robot) repository also contains links to sample demonstration data and model checkpoints used to report results in our [**CoRL '22 paper**](https://tinyurl.com/toolflownet).
 
 <hr>
 
@@ -106,7 +110,7 @@ you leave these blank, the script might not run successfully.
 ## CoRL 2022 Experiments
 
 Before this, make sure you have downloaded demonstration data [following our
-other repository's instructions][1]. This includes both the cache and the
+other repository's instructions][1]. This includes both the model checkpoints and the
 demonstrations themselves. You may put the data in a different location if
 desired.
 
