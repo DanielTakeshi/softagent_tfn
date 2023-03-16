@@ -13,7 +13,7 @@ from bc.bc import (
 )
 
 # We're unlikely to change the logger or `update_env_kwargs` in BC.
-from curl.logger import Logger
+from bc.logger import Logger
 from chester import logger
 import wandb
 
