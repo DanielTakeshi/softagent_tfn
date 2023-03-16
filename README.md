@@ -44,7 +44,7 @@ Contents:
 
 <hr>
 
-Running the instructions in this branch assumes that you have correctly installed [`softgym_tfn`](https://github.com/DanielTakeshi/softgym_tfn) and `softagent_tfn`[https://github.com/DanielTakeshi/softagent_tfn/].
+Running the instructions in this branch assumes that you have correctly installed [`softgym_tfn`](https://github.com/DanielTakeshi/softgym_tfn) and [`softagent_tfn`](https://github.com/DanielTakeshi/softagent_tfn/).
 
 ## Installation
 
